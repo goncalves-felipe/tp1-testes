@@ -1,3 +1,4 @@
+import { User } from '../../domain/entity/user.entity';
 import { UserTypeEnum } from 'src/shared/enum/user-type-enum';
 
 export class UserDto {
@@ -8,3 +9,11 @@ export class UserDto {
   public confirmationPassword: string;
   public type: UserTypeEnum;
 }
+
+export const mapUserDtoFromEntity = (entity: User) => {
+  const userDto: UserDto = new UserDto();
+  userDto.id = entity.id;
+  userDto.name = entity.name;
+  userDto.type = entity.type;
+  return userDto;
+};
