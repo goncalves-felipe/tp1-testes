@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProductDto } from '../../entry-point/resource/product-dto';
 import { ProductRepository } from '../repository/product.repository';
+import { Product } from '../entity/product.entity';
 
 @Injectable()
 export class ProductService {
@@ -10,11 +11,17 @@ export class ProductService {
     const { name, description, price } = createProductData;
 
     if (!name || !description || !price) {
-      throw 'There should be no empty fields.';
+      throw new HttpException(
+        'There sould be no empty fields',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
+    const newProductId =
+      this.productRepository.createProduct(createProductData);
+
     const newProduct: ProductDto = {
-      id: 1,
+      id: newProductId,
       name: createProductData.name,
       description: createProductData.description,
       price: createProductData.price,
@@ -25,56 +32,56 @@ export class ProductService {
 
   getProduct(productId: number): ProductDto {
     if (!productId) {
-      throw new HttpException('Invalid product ID', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Invalid product id', HttpStatus.BAD_REQUEST);
     }
 
-    if (productId === 1) {
-      return {
-        id: 1,
-        name: 'Sample Product',
-        description: 'A sample product description.',
-        price: 19.99,
-      };
-    } else {
+    const product = this.productRepository.getProduct(productId);
+
+    if (!product) {
       throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
     }
+
+    return product;
+  }
+
+  getProducts(): ProductDto[] {
+    const products = this.getProducts();
+
+    if (!products || !products.length) {
+      throw new HttpException('No products found', HttpStatus.NOT_FOUND);
+    }
+
+    return products;
   }
 
   editProduct(productId: number, updatedProductData: ProductDto): ProductDto {
     if (!productId) {
-      throw 'Invalid product ID';
+      throw new HttpException('Invalid product id', HttpStatus.BAD_REQUEST);
     }
 
-    const existingProduct = this.productRepository.getProduct(productId);
+    const product = this.productRepository.getProduct(productId);
 
-    if (!existingProduct) {
-      throw 'Product not found';
+    if (!product) {
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
     }
 
-    existingProduct.name = updatedProductData.name || existingProduct.name;
-    existingProduct.description =
-      updatedProductData.description || existingProduct.description;
-    existingProduct.price = updatedProductData.price || existingProduct.price;
-
-    return {
-      id: productId,
-      name: existingProduct.name,
-      description: existingProduct.description,
-      price: existingProduct.price,
+    const updatedProduct: Product = {
+      ...updatedProductData,
+      name: updatedProductData.name || product.name,
+      description: updatedProductData.description || product.description,
+      price: updatedProductData.price || product.price,
     };
+
+    this.productRepository.editProduct(updatedProduct);
+
+    return updatedProduct;
   }
 
-  deleteProduct(productId: number): number {
+  deleteProduct(productId: number) {
     if (!productId) {
-      throw 'Invalid product ID';
+      throw new HttpException('Invalid product id', HttpStatus.BAD_REQUEST);
     }
 
-    const deletedProductId = this.productRepository.deleteProduct(productId);
-
-    if (!deletedProductId) {
-      throw 'Product not found';
-    }
-
-    return deletedProductId;
+    this.productRepository.deleteProduct(productId);
   }
 }

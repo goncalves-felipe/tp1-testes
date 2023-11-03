@@ -18,12 +18,23 @@ export class ProductRepository {
     };
   }
 
+  getProducts(): Product[] {
+    return [
+      {
+        id: 1,
+        name: 'Sample Product',
+        description: 'A sample product description.',
+        price: 19.99,
+      },
+    ];
+  }
+
   deleteProduct(productId: number): number {
     // TODO
     return 1;
   }
 
-  editProduct(productId: number, editProduct: Product): void {
+  editProduct(product: Product): void {
     // TODO
   }
 }

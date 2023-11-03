@@ -1,43 +1,51 @@
-import { Body, Controller, Post, Get, Param, Patch, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Param,
+  Patch,
+  Delete,
+  Get,
+} from '@nestjs/common';
 import { ProductDto } from '../resource/product-dto';
 import { ProductService } from 'src/domain/service/product.service';
 
-@Controller('product')
+@Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
   createProduct(@Body() createProductBody: ProductDto): ProductDto {
-    try {
-      const newProduct = this.productService.createProduct(createProductBody);
-      return newProduct;
-    } catch (error) {
-      throw error;
-    }
+    const newProduct = this.productService.createProduct(createProductBody);
+    return newProduct;
+  }
+
+  @Get()
+  getProducts(): ProductDto[] {
+    return this.productService.getProducts();
+  }
+
+  @Get(':id')
+  getProduct(@Param('id') productId: number): ProductDto {
+    const product = this.productService.getProduct(productId);
+    return product;
   }
 
   @Patch(':id')
-  editProduct(@Param('id') productId: number, @Body() updatedProductData: ProductDto): ProductDto {
-    try {
-      const updatedProduct = this.productService.editProduct(productId, updatedProductData);
-      return updatedProduct;
-    } catch (error) {
-      throw error;
-    }
+  editProduct(
+    @Param('id') productId: number,
+    @Body() updatedProductData: ProductDto,
+  ): ProductDto {
+    const updatedProduct = this.productService.editProduct(
+      productId,
+      updatedProductData,
+    );
+
+    return updatedProduct;
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id') productId: number): string {
-    try {
-      const deletedProductId = this.productService.deleteProduct(productId);
-      if (deletedProductId) {
-        return `Product ID ${deletedProductId} deleted.`;
-      } else {
-        return `Product ID ${productId} not found.`;
-      }
-    } catch (error) {
-      throw error;
-    }
+  deleteProduct(@Param('id') productId: number) {
+    this.productService.deleteProduct(productId);
   }
 }
-

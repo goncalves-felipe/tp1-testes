@@ -3,7 +3,7 @@ import { ShoppingCartDto } from '../resource/shopping-cart-dto';
 import { ShoppingCartService } from '../../domain/service/shopping-cart.service';
 import { CreateShoppingCartDto } from '../resource/create-shopping-cart-dto';
 
-@Controller('user/:userId/shopping-cart')
+@Controller('users/:userId/shopping-carts')
 export class ShoppingCartController {
   constructor(private readonly shoppingCartService: ShoppingCartService) {}
 
