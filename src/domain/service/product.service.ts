@@ -10,9 +10,16 @@ export class ProductService {
   createProduct(createProductData: ProductDto): ProductDto {
     const { name, description, price } = createProductData;
 
-    if (!name || !description || !price) {
+    if (!name || !description) {
       throw new HttpException(
         'There sould be no empty fields',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (price <= 0) {
+      throw new HttpException(
+        'The price value should be greater than 0',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -45,7 +52,7 @@ export class ProductService {
   }
 
   getProducts(): ProductDto[] {
-    const products = this.getProducts();
+    const products = this.productRepository.getProducts();
 
     if (!products || !products.length) {
       throw new HttpException('No products found', HttpStatus.NOT_FOUND);

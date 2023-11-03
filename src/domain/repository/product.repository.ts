@@ -18,7 +18,7 @@ export class ProductRepository {
     };
   }
 
-  getProducts(): Product[] {
+  getProducts(): Product[] | null {
     return [
       {
         id: 1,
