@@ -6,7 +6,7 @@ export class UserDto {
   public name: string;
   public username: string;
   public password: string;
-  public confirmationPassword: string;
+  public confirmationPassword?: string;
   public type: UserTypeEnum;
 }
 

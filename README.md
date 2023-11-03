@@ -1,73 +1,33 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Sistema de Compras Online
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+**Autores:** Felipe de Paula Gonçalves E Vítor Fagundes Alves Nogueira
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Descrição
 
-## Description
+O Sistema de Compras Online é uma aplicação web que permite aos usuários pesquisar, visualizar e comprar produtos online. Os clientes podem criar uma conta, adicionar produtos ao carrinho de compras, finalizar compras e muito mais.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tecnologia
 
-## Installation
+O nosso sistema é construído com [Nest.js](https://nestjs.com/), um poderoso framework Node.js que facilita o desenvolvimento de aplicações robustas e escaláveis.
 
-```bash
-$ npm install
-```
+### Visão Geral da Arquitetura
 
-## Running the app
+O nosso sistema segue uma arquitetura baseada no padrão MVC (Model-View-Controller) e utiliza os princípios de injeção de dependência para garantir a separação de preocupações. A arquitetura é composta por três camadas principais:
 
-```bash
-# development
-$ npm run start
+1. **Controller:** Esta camada recebe as requisições HTTP dos clientes e encaminha os dados para o serviço apropriado. Os controladores são responsáveis por lidar com a entrada e saída de dados.
 
-# watch mode
-$ npm run start:dev
+2. **Service:** O serviço contém a lógica de negócios da aplicação. Ele aplica regras de negócios, processa dados e coordena a interação entre diferentes componentes da aplicação. O serviço é a camada intermediária entre o controlador e o repositório.
 
-# production mode
-$ npm run start:prod
-```
+3. **Repository:** O repositório lida com a persistência de dados, seja em um banco de dados, sistema de arquivos ou qualquer outro mecanismo de armazenamento. Ele fornece métodos para criar, ler, atualizar e excluir dados.
 
-## Test
+### Exemplo de Fluxo de Trabalho
 
-```bash
-# unit tests
-$ npm run test
+1. Um cliente faz uma requisição HTTP para o controlador apropriado.
+2. O controlador recebe a requisição, valida os dados de entrada e chama o serviço correspondente.
+3. O serviço aplica as regras de negócios, processa os dados, realiza consultas no repositório, se necessário, e prepara a resposta.
+4. O serviço retorna a resposta para o controlador, que então envia a resposta de volta ao cliente.
 
-# e2e tests
-$ npm run test:e2e
+## Pré-requisitos
 
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- Node.js instalado
+- npm ou yarn instalado

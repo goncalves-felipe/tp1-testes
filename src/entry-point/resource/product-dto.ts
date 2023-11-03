@@ -5,6 +5,8 @@ export class ProductDto {
   public name: string;
   public description: string;
   public price: number;
+  public quantity?: number; 
+  public stock?: number;    
 }
 
 export const mapProductDtoFromEntity = (entity: Product) => {

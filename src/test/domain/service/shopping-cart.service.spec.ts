@@ -8,6 +8,9 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { ShoppingCart } from '../../../domain/entity/shopping-cart.entity';
 import { User } from 'src/domain/entity/user.entity';
 import { UserDto } from 'src/entry-point/resource/user-dto';
+import { ProductRepository } from '../../../domain/repository/product.repository';
+import { Product } from '../../../domain/entity/product.entity';
+import { UserTypeEnum } from '../../../shared/enum/user-type-enum';
 
 describe('ShoppingCartService', () => {
   let shoppingCartService: ShoppingCartService;
@@ -15,12 +18,14 @@ describe('ShoppingCartService', () => {
   let userService: UserService;
   let userRepository: UserRepository;
   let jwtService: JwtService;
+  let productRepository: ProductRepository;
 
   beforeEach(() => {
     userRepository = new UserRepository();
     jwtService = new JwtService();
     userService = new UserService(userRepository, jwtService);
     shoppingCartRepository = new ShoppingCartRepository();
+    productRepository = new ProductRepository();
     shoppingCartService = new ShoppingCartService(
       shoppingCartRepository,
       userService,
@@ -127,4 +132,29 @@ describe('ShoppingCartService', () => {
       expect(result).toEqual({ products, user, id: 1 });
     });
   });
+
+  describe('addProductToCart', () => {
+    it('should throw an error when adding a product with insufficient stock', () => {
+      const shoppingCart = {
+        id: 1,
+        user: {
+          id: 1,
+          name: 'User Name',
+          username: 'user123',
+          type: 0,
+          password: 'password123',
+        },
+        products: [],
+        active: true,
+      };
+    
+      jest.spyOn(shoppingCartRepository, 'getShoppingCartById').mockReturnValue(shoppingCart);
+    
+      jest.spyOn(productRepository, 'getProduct').mockReturnValue({ id: 1, name: 'Product 1', description: 'Description', price: 10, stock: 5 });
+    
+      expect(() => shoppingCartService.addProductToCart(1, 1, 1, 10)).toThrow();
+    });
+
+  });
+  
 });
