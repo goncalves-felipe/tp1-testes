@@ -1,12 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserDto } from '../../entry-point/resource/user-dto';
+import {
+  UserDto,
+  mapUserDtoFromEntity,
+} from '../../entry-point/resource/user-dto';
 import { UserTypeEnum } from '../../shared/enum/user-type-enum';
 import { UserRepository } from '../repository/user.repository';
-import { User } from '../entity/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { SignInUserDto } from 'src/entry-point/resource/sign-in-user-dto';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   createUser(userDto: UserDto): UserDto {
     const { name, password, username, confirmationPassword, type } = userDto;
@@ -25,15 +32,13 @@ export class UserService {
 
     const newUserId = this.userRepository.createUser(userDto);
 
-    return {
+    return mapUserDtoFromEntity({
       ...userDto,
-      password: '',
-      confirmationPassword: '',
       id: newUserId,
-    };
+    });
   }
 
-  getUserById(userId: number): User {
+  getUserById(userId: number): UserDto {
     if (!userId) {
       throw new HttpException(
         {
@@ -56,53 +61,90 @@ export class UserService {
       );
     }
 
-    return user;
+    return mapUserDtoFromEntity(user);
   }
 
-  deleteUser(userId: number): string {
+  deleteUser(userId: number): void {
     if (!userId) {
-      throw 'Invalid user ID';
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    const deletedUserId = this.userRepository.deleteUser(userId);
-
-    if (!deletedUserId) {
-      throw 'User not found';
-    }
-
-    return `User with ID ${deletedUserId} has been deleted successfully.`;
-  }  
-
-  loginUser(loginData: UserDto): User | null {
-    const { username, password } = loginData;
-
-    if (username === 'felipe' && password === 'password') {
-      return {
-        id: 1,
-        name: 'Felipe Gonçalves',
-        username: 'felipe',
-        password: '',
-        type: 0,
-      };
-    } else {
-      throw 'Invalid username or password';
-    }
+    this.userRepository.deleteUser(userId);
   }
 
-  editUser(userId: number, updatedUserData: UserDto): User | null {
+  async loginUser(
+    username: string,
+    password: string,
+  ): Promise<SignInUserDto | null> {
+    if (!password || !username) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'There should be no empty fields.',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const user = this.userRepository.signInUser(username, password);
+
+    if (!user) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'User not found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const payload = { sub: user.id, username: user.username };
+
+    return {
+      accessToken: await this.jwtService.signAsync(payload),
+      user: mapUserDtoFromEntity(user),
+    };
+  }
+
+  updateUser(userId: number, updatedUserData: UserDto): UserDto {
+    const { name, username } = updatedUserData;
+
+    if (!userId) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Invalid user id',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const user = this.userRepository.getUserById(userId);
 
     if (!user) {
-      throw 'User not found';
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'User not found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
 
-    user.name = updatedUserData.name || user.name;
-    user.username = updatedUserData.username || user.username;
+    const updatedUser = {
+      ...user,
+      name: name || user.name,
+      username: username || user.username,
+    };
 
-    this.userRepository.updateUser(userId, user);
+    this.userRepository.updateUser(userId, updatedUser);
 
-    return user;
+    return mapUserDtoFromEntity(updatedUser);
   }
-
-
 }

@@ -1,6 +1,15 @@
-import { Body, Controller, Delete, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { UserDto } from '../resource/user-dto';
 import { UserService } from 'src/domain/service/user.service';
+import { SignInUserDto } from '../resource/sign-in-user-dto';
 
 @Controller('user')
 export class UserController {
@@ -8,63 +17,30 @@ export class UserController {
 
   @Post()
   createUser(@Body() createUserBody: UserDto): UserDto {
-    try {
-      const newUser = this.userService.createUser(createUserBody);
-      return newUser;
-    } catch (error) {
-      throw error;
-    }
+    const newUser = this.userService.createUser(createUserBody);
+    return newUser;
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') userId: number): string {
-    try {
-      const deletedUserId = this.userService.deleteUser(userId);
-      if (deletedUserId) {
-        return 'User ID ${deletedUserId} deleted.';
-      } else {
-        return 'User ID ${userId} not found.';
-      }
-    } catch (error) {
-      throw error;
-    }
+  deleteUser(@Param('id') userId: number) {
+    this.userService.deleteUser(userId);
   }
 
   @Post('login')
-  loginUser(@Body() loginData: UserDto): string {
-    try {
-      const user = this.userService.loginUser(loginData);
-      if (user) {
-        return `Welcome, ${user.name}!`;
-      } else {
-        return 'Invalid username or password.';
-      }
-    } catch (error) {
-      throw error;
-    }
+  async loginUser(@Body() loginData: UserDto): Promise<SignInUserDto | null> {
+    return await this.userService.loginUser(
+      loginData.username,
+      loginData.password,
+    );
   }
 
   @Patch(':id')
-  editUser(@Param('id') userId: number, @Body() updatedUserData: UserDto): string {
-    try {
-      const updatedUser = this.userService.editUser(userId, updatedUserData);
-      if (updatedUser) {
-        return `User ID ${userId} updated successfully.`;
-      } else {
-        return `User ID ${userId} not found.`;
-      }
-    } catch (error) {
-      throw error;
-    }
+  updateUser(@Param('id') userId: number, @Body() updatedUserData: UserDto) {
+    return this.userService.updateUser(userId, updatedUserData);
   }
-  
-}
 
-//nao sei oq é isto, mas foi sugestao do vscode pra linha 20
-function Param(arg0: string): (target: UserController, propertyKey: "deleteUser" | "editUser", parameterIndex: 0) => void {
-  throw new Error('Function not implemented.');
-}
-
-function Patch(arg0: string): (target: UserController, propertyKey: "editUser", descriptor: TypedPropertyDescriptor<(userId: number, updatedUserData: UserDto) => string>) => void{
-  throw new Error('Function not implemented.');
+  @Get(':id')
+  getUser(@Param('id') userId: number) {
+    return this.userService.getUserById(userId);
+  }
 }

@@ -12,8 +12,11 @@ export class UserDto {
 
 export const mapUserDtoFromEntity = (entity: User) => {
   const userDto: UserDto = new UserDto();
+
   userDto.id = entity.id;
   userDto.name = entity.name;
   userDto.type = entity.type;
+  userDto.username = entity.username;
+
   return userDto;
 };

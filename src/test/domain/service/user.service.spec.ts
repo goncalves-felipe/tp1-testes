@@ -1,15 +1,19 @@
-import { UserTypeEnum } from 'src/shared/enum/user-type-enum';
 import { UserRepository } from '../../../domain/repository/user.repository';
 import { UserService } from '../../../domain/service/user.service';
 import { UserDto } from '../../../entry-point/resource/user-dto';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '../../../domain/entity/user.entity';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 describe('UserService', () => {
   let userService: UserService;
   let userRepository: UserRepository;
+  let jwtService: JwtService;
 
   beforeEach(() => {
     userRepository = new UserRepository();
-    userService = new UserService(userRepository);
+    jwtService = new JwtService();
+    userService = new UserService(userRepository, jwtService);
   });
 
   describe('createUser', () => {
@@ -105,211 +109,328 @@ describe('UserService', () => {
         expect(result).toThrow('Invalid user type.');
       },
     );
+
+    it('Should create user correctly', () => {
+      const userDto: UserDto = {
+        name: 'name',
+        confirmationPassword: 'abc123',
+        password: 'abc123',
+        type: 0,
+        username: 'username',
+      };
+
+      const expectedUser = {
+        id: 1,
+        name: 'name',
+        type: 0,
+        username: 'username',
+      };
+
+      const result = userService.createUser(userDto);
+
+      expect(result).toEqual(expectedUser);
+    });
   });
 
   describe('getUserById', () => {
-    it('Should return a user with a valid ID', () => {
-      const existingUserId = 1;
+    it('Should return a user with a valid Id', () => {
+      const userId = 1;
 
-      const existingUser: UserDto = {
-        id: existingUserId,
+      const user: User = {
+        id: userId,
         name: 'John Doe',
         username: 'johndoe',
         password: 'password',
-        confirmationPassword: 'password',
         type: 0,
       };
 
-      userRepository.getUserById = (userId) => {
-        if (userId === existingUserId) {
-          return existingUser;
-        }
-        return null;
+      const mappedUser = {
+        id: userId,
+        name: 'John Doe',
+        type: 0,
+        username: 'johndoe',
       };
 
-      const result = userService.getUserById(existingUserId);
+      jest.spyOn(userRepository, 'getUserById').mockImplementation(() => user);
 
-      expect(result).toEqual(existingUser);
+      const result = userService.getUserById(userId);
+
+      expect(result).toEqual(mappedUser);
     });
 
-    it('Should throw an error with an invalid ID', () => {
-      const existingUserId = 1;
+    it('Should throw an error with an invalid id', () => {
+      const userId = 1;
 
-      userRepository.getUserById = () => null;
-
-      const invalidUserId = 999;
-
-      expect(() => userService.getUserById(invalidUserId)).toThrow();
-    });
-  });
-
-  describe('editUser', () => {
-    beforeEach(() => {
-      jest.spyOn(userRepository, 'updateUser').mockImplementation(() => 1);
-    });
-
-    it('Should update user data with valid ID and fields', () => {
-      const existingUserId = 1;
-
-      const existingUser: UserDto = {
-        id: existingUserId,
+      const user: User = {
+        id: userId,
         name: 'John Doe',
         username: 'johndoe',
         password: 'password',
-        confirmationPassword: 'password',
         type: 0,
       };
 
-      userRepository.getUserById = (userId) => {
-        if (userId === existingUserId) {
-          return existingUser;
-        }
-        return null;
-      };
+      jest.spyOn(userRepository, 'getUserById').mockImplementation(() => user);
 
-      const editedData: UserDto = {
-        name: 'Updated Name',
-        username: 'updatedusername',
-        password: '',
-        confirmationPassword: '',
-        type: UserTypeEnum.Customer
-      };
+      const invalidUserId = 0;
 
-      const result = userService.editUser(existingUserId, editedData);
-
-      expect(result).toEqual({
-        ...existingUser,
-        name: 'Updated Name',
-        username: 'updatedusername',
-      });
+      expect(() => userService.getUserById(invalidUserId)).toThrow(
+        new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Invalid user id',
+          },
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     });
 
-    it('Should throw an error with an invalid ID', () => {
-      const existingUserId = 1;
+    it('Should throw an error when user is not found', () => {
+      jest.spyOn(userRepository, 'getUserById').mockImplementation(() => null);
 
-      userRepository.getUserById = () => null;
+      const userId = 1;
 
-      const editedData: UserDto = {
-        name: 'Updated Name',
-        username: 'updatedusername',
-        password: '',
-        confirmationPassword: '',
-        type: UserTypeEnum.Customer
-      };
-
-      const invalidUserId = 999;
-
-      expect(() => userService.editUser(invalidUserId, editedData)).toThrow();
+      expect(() => userService.getUserById(userId)).toThrow(
+        new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'User not found',
+          },
+          HttpStatus.NOT_FOUND,
+        ),
+      );
     });
   });
 
   describe('deleteUser', () => {
-    it('Should delete a user with a valid ID', () => {
-      const existingUserId = 1;
+    it('should throw error when userId is invalid', () => {
+      const userId = 0;
 
-      userRepository.deleteUser = (userId) => {
-        if (userId === existingUserId) {
-          return existingUserId;
-        }
-        return null; 
-      };
+      const result = () => userService.deleteUser(userId);
 
-      const result = userService.deleteUser(existingUserId);
-
-      expect(result).toEqual(existingUserId);
+      expect(result).toThrow(
+        new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Invalid user id',
+          },
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     });
 
-    it('Should throw an error with an invalid ID', () => {
-      userRepository.deleteUser = () => null;
+    it('should not throw error with userId is valid', () => {
+      const userId = 1;
 
-      const invalidUserId = 999;
+      const result = () => userService.deleteUser(userId);
 
-      expect(() => userService.deleteUser(invalidUserId)).toThrow();
+      expect(result).not.toThrow();
     });
   });
 
-  describe('createUser', () => {
-    it('Should create a customer user', () => {
-      const userDto: UserDto = {
-        name: 'John Doe',
-        confirmationPassword: 'abc123',
-        password: 'abc123',
+  describe('loginUser', () => {
+    beforeEach(() => {
+      jest
+        .spyOn(JwtService.prototype, 'signAsync')
+        .mockImplementation(async () => await Promise.resolve('abcefg'));
+    });
+
+    it('should throw error when username is empty', async () => {
+      const username = '';
+      const password = 'password';
+
+      const result = async () =>
+        await userService.loginUser(username, password);
+
+      await expect(result).rejects.toThrow(
+        new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'There should be no empty fields.',
+          },
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw error when password is empty', async () => {
+      const username = 'username';
+      const password = '';
+
+      const result = async () =>
+        await userService.loginUser(username, password);
+
+      await expect(result).rejects.toThrow(
+        new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'There should be no empty fields.',
+          },
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw error when user is not found', async () => {
+      const username = 'username';
+      const password = 'password';
+
+      jest.spyOn(userRepository, 'signInUser').mockImplementation(() => null);
+
+      const result = async () =>
+        await userService.loginUser(username, password);
+
+      await expect(result).rejects.toThrow(
+        new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'User not found',
+          },
+          HttpStatus.NOT_FOUND,
+        ),
+      );
+    });
+
+    it('should return token and user', async () => {
+      const username = 'username';
+      const password = 'password';
+
+      const user: User = { id: 1, name: 'name', username, password, type: 0 };
+      const mappedUser = { id: 1, name: 'name', username, type: 0 };
+
+      jest.spyOn(userRepository, 'signInUser').mockImplementation(() => user);
+
+      const result = await userService.loginUser(username, password);
+
+      expect(result?.user).toEqual(mappedUser);
+      expect(result?.accessToken).toEqual('abcefg');
+    });
+  });
+
+  describe('updateUser', () => {
+    it('should throw error when userId is invalid', () => {
+      const userId = 0;
+      const userData = {
+        name: 'new name',
+        username: 'new username',
+      } as UserDto;
+
+      const result = () => userService.updateUser(userId, userData);
+
+      expect(result).toThrow(
+        new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Invalid user data',
+          },
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it('should throw error when userId is not found', () => {
+      const userId = 1;
+      const userData = {
+        name: 'new name',
+        username: 'new username',
+      } as UserDto;
+
+      jest.spyOn(userRepository, 'getUserById').mockImplementation(() => null);
+
+      const result = () => userService.updateUser(userId, userData);
+
+      expect(result).toThrow(
+        new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'User not found',
+          },
+          HttpStatus.NOT_FOUND,
+        ),
+      );
+    });
+
+    it('should return mapped user', () => {
+      const userId = 1;
+      const userData = {
+        name: 'new name',
+        username: 'new username',
+      } as UserDto;
+      const user = {
+        id: 1,
+        name: 'name',
+        username: 'username',
         type: 0,
-        username: 'johndoe',
+      } as User;
+      const expectedUser = {
+        id: 1,
+        name: 'new name',
+        username: 'new username',
+        type: 0,
       };
 
-      const result = userService.createUser(userDto);
+      jest.spyOn(userRepository, 'getUserById').mockImplementation(() => user);
+      jest.spyOn(userRepository, 'updateUser');
 
-      expect(result.type).toEqual(0);
+      const result = userService.updateUser(userId, userData);
+
+      expect(result).toEqual(expectedUser);
+      expect(userRepository.updateUser).toHaveBeenCalledTimes(1);
     });
 
-    it('Should create an employee user', () => {
-      const userDto: UserDto = {
-        name: 'Alice Smith',
-        confirmationPassword: 'xyz789',
-        password: 'xyz789',
-        type: 1,
-        username: 'alicesmith',
+    it('should keep old name the new is empty', () => {
+      const userId = 1;
+      const userData = {
+        name: '',
+        username: 'new username',
+      } as UserDto;
+      const user = {
+        id: 1,
+        name: 'name',
+        username: 'username',
+        type: 0,
+      } as User;
+      const expectedUser = {
+        id: 1,
+        name: 'name',
+        username: 'new username',
+        type: 0,
       };
 
-      const result = userService.createUser(userDto);
+      jest.spyOn(userRepository, 'getUserById').mockImplementation(() => user);
+      jest.spyOn(userRepository, 'updateUser');
 
-      expect(result.type).toEqual(1);
+      const result = userService.updateUser(userId, userData);
+
+      expect(result).toEqual(expectedUser);
+      expect(userRepository.updateUser).toHaveBeenCalledTimes(1);
     });
 
-    it('Should throw an error with an invalid user type', () => {
-      const userDto: UserDto = {
-        name: 'Invalid User',
-        confirmationPassword: 'invalid123',
-        password: 'invalid123',
-        type: 2, 
-        username: 'invaliduser',
+    it('should keep old username the new is empty', () => {
+      const userId = 1;
+      const userData = {
+        name: 'new name',
+        username: 'username',
+      } as UserDto;
+      const user = {
+        id: 1,
+        name: 'name',
+        username: 'username',
+        type: 0,
+      } as User;
+      const expectedUser = {
+        id: 1,
+        name: 'new name',
+        username: 'username',
+        type: 0,
       };
 
-      expect(() => userService.createUser(userDto)).toThrow('Invalid user type.');
+      jest.spyOn(userRepository, 'getUserById').mockImplementation(() => user);
+      jest.spyOn(userRepository, 'updateUser');
+
+      const result = userService.updateUser(userId, userData);
+
+      expect(result).toEqual(expectedUser);
+      expect(userRepository.updateUser).toHaveBeenCalledTimes(1);
     });
-
-    it('Should create a user successfully', () => {
-      const userDto: UserDto = {
-        name: 'John Doe',
-        confirmationPassword: 'abc123',
-        password: 'abc123',
-        type: 0, // Customer
-        username: 'johndoe',
-      };
-
-      const result = userService.createUser(userDto);
-
-      expect(result.id).toBeDefined();
-    });
-
-    it('Should create a user with the correct name', () => {
-      const userDto: UserDto = {
-        name: 'Alice Smith',
-        confirmationPassword: 'xyz789',
-        password: 'xyz789',
-        type: 1,
-        username: 'alicesmith',
-      };
-
-      const result = userService.createUser(userDto);
-
-      expect(result.name).toEqual('Alice Smith');
-    });
-
-    it('Should create a user with the correct type', () => {
-      const userDto: UserDto = {
-        name: 'Bob Johnson',
-        confirmationPassword: '123456',
-        password: '123456',
-        type: 0, 
-        username: 'bobjohnson',
-      };
-
-      const result = userService.createUser(userDto);
-
-      expect(result.type).toEqual(0);
-    });
-
   });
 });

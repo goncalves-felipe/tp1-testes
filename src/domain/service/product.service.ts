@@ -1,16 +1,18 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProductDto } from '../../entry-point/resource/product-dto';
-import { Product } from '../entity/product.entity';
+import { ProductRepository } from '../repository/product.repository';
 
 @Injectable()
 export class ProductService {
+  constructor(private readonly productRepository: ProductRepository) {}
+
   createProduct(createProductData: ProductDto): ProductDto {
     const { name, description, price } = createProductData;
 
     if (!name || !description || !price) {
-        throw 'There should be no empty fields.';
+      throw 'There should be no empty fields.';
     }
-    
+
     const newProduct: ProductDto = {
       id: 1,
       name: createProductData.name,
@@ -25,7 +27,7 @@ export class ProductService {
     if (!productId) {
       throw new HttpException('Invalid product ID', HttpStatus.BAD_REQUEST);
     }
-    
+
     if (productId === 1) {
       return {
         id: 1,
@@ -43,16 +45,17 @@ export class ProductService {
       throw 'Invalid product ID';
     }
 
-    const existingProduct = this.productRepository.getProductById(productId);
+    const existingProduct = this.productRepository.getProduct(productId);
 
     if (!existingProduct) {
       throw 'Product not found';
     }
 
     existingProduct.name = updatedProductData.name || existingProduct.name;
-    existingProduct.description = updatedProductData.description || existingProduct.description;
+    existingProduct.description =
+      updatedProductData.description || existingProduct.description;
     existingProduct.price = updatedProductData.price || existingProduct.price;
-    
+
     return {
       id: productId,
       name: existingProduct.name,
@@ -62,7 +65,6 @@ export class ProductService {
   }
 
   deleteProduct(productId: number): number {
-   
     if (!productId) {
       throw 'Invalid product ID';
     }

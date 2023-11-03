@@ -19,13 +19,21 @@ export class UserRepository {
     };
   }
 
-  deleteUser(userId: number): number {
+  signInUser(username: string, password: string): User | null {
+    return {
+      id: 1,
+      name: 'Felipe Gonçalves',
+      password,
+      username,
+      type: 0,
+    };
+  }
+
+  deleteUser(userId: number) {
     // TODO
-    return 1;
   }
 
   updateUser(userId: number, updatedUser: User): void {
     // TODO
   }
-  
 }

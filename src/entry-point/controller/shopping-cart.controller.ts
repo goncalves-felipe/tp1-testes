@@ -12,14 +12,10 @@ export class ShoppingCartController {
     @Param() params: { userId: string },
     @Body() body: CreateShoppingCartDto,
   ): ShoppingCartDto {
-    try {
-      const newShoppingCart = this.shoppingCartService.createShoppingCart(
-        +params.userId,
-        body,
-      );
-      return newShoppingCart;
-    } catch (error) {
-      throw error;
-    }
+    const newShoppingCart = this.shoppingCartService.createShoppingCart(
+      +params.userId,
+      body,
+    );
+    return newShoppingCart;
   }
 }
