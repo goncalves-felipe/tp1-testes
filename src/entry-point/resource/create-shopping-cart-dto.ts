@@ -1,3 +1,5 @@
+import { ProductDto } from './product-dto';
+
 export class CreateShoppingCartDto {
-  public products: any[];
+  public products: ProductDto[];
 }

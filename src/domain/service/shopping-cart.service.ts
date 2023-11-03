@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ShoppingCartRepository } from '../repository/shopping-cart.repository';
 import { ShoppingCartDto } from '../../entry-point/resource/shopping-cart-dto';
 import { UserService } from './user.service';
-import { mapUserDtoFromEntity } from '../../entry-point/resource/user-dto';
 import { CreateShoppingCartDto } from '../../entry-point/resource/create-shopping-cart-dto';
+import { ShoppingCart } from '../entity/shopping-cart.entity';
 
 @Injectable()
 export class ShoppingCartService {
@@ -47,16 +47,15 @@ export class ShoppingCartService {
     );
 
     const user = this.userService.getUserById(userId);
-    const userDto = mapUserDtoFromEntity(user);
 
     return {
       products: products || [],
-      user: userDto,
+      user: user,
       id: newShoppingCartId,
     };
   }
 
-  private getActiveShoppingCartFromUser(userId: number): any | null {
+  private getActiveShoppingCartFromUser(userId: number): ShoppingCart | null {
     return this.shoppingCartRepository.getActiveShoppingCartFromUser(userId);
   }
 }
