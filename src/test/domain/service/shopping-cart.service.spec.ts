@@ -36,13 +36,7 @@ describe('ShoppingCartService', () => {
         shoppingCartService.createShoppingCart(userId, { products });
 
       expect(result).toThrow(
-        new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'Invalid user Id',
-          },
-          HttpStatus.BAD_REQUEST,
-        ),
+        new HttpException('Invalid user Id', HttpStatus.BAD_REQUEST),
       );
     });
 
@@ -72,10 +66,7 @@ describe('ShoppingCartService', () => {
 
       expect(result).toThrow(
         new HttpException(
-          {
-            status: HttpStatus.FORBIDDEN,
-            error: 'The user already have an active shopping cart.',
-          },
+          'The user already have an active shopping cart.',
           HttpStatus.FORBIDDEN,
         ),
       );

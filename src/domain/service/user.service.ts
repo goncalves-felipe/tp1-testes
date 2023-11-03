@@ -19,15 +19,21 @@ export class UserService {
     const { name, password, username, confirmationPassword, type } = userDto;
 
     if (!name || !password || !username || !confirmationPassword) {
-      throw 'There should be no empty fields.';
+      throw new HttpException(
+        'There should be no empty fields.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (password !== confirmationPassword) {
-      throw 'Password and confirmation password should be equal.';
+      throw new HttpException(
+        'Password and confirmation password should be equal.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     if (type !== UserTypeEnum.Customer && type !== UserTypeEnum.Employee) {
-      throw 'Invalid user type.';
+      throw new HttpException('Invalid user type.', HttpStatus.BAD_REQUEST);
     }
 
     const newUserId = this.userRepository.createUser(userDto);
@@ -40,25 +46,13 @@ export class UserService {
 
   getUserById(userId: number): UserDto {
     if (!userId) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Invalid user id',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Invalid user id', HttpStatus.BAD_REQUEST);
     }
 
     const user = this.userRepository.getUserById(userId);
 
     if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'User not found',
-        },
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     return mapUserDtoFromEntity(user);
@@ -66,13 +60,7 @@ export class UserService {
 
   deleteUser(userId: number): void {
     if (!userId) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Invalid user id',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Invalid user id', HttpStatus.BAD_REQUEST);
     }
 
     this.userRepository.deleteUser(userId);
@@ -84,10 +72,7 @@ export class UserService {
   ): Promise<SignInUserDto | null> {
     if (!password || !username) {
       throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'There should be no empty fields.',
-        },
+        'There should be no empty fields.',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -95,13 +80,7 @@ export class UserService {
     const user = this.userRepository.signInUser(username, password);
 
     if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'User not found',
-        },
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     const payload = { sub: user.id, username: user.username };
@@ -116,25 +95,13 @@ export class UserService {
     const { name, username } = updatedUserData;
 
     if (!userId) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Invalid user id',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Invalid user id', HttpStatus.BAD_REQUEST);
     }
 
     const user = this.userRepository.getUserById(userId);
 
     if (!user) {
-      throw new HttpException(
-        {
-          status: HttpStatus.NOT_FOUND,
-          error: 'User not found',
-        },
-        HttpStatus.NOT_FOUND,
-      );
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
     const updatedUser = {

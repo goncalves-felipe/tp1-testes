@@ -32,7 +32,12 @@ describe('UserService', () => {
 
       const result = () => userService.createUser(userDto);
 
-      expect(result).toThrow('There should be no empty fields.');
+      expect(result).toThrow(
+        new HttpException(
+          'There should be no empty fields.',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     });
 
     it('Should throw error when username is empty', () => {
@@ -46,7 +51,12 @@ describe('UserService', () => {
 
       const result = () => userService.createUser(userDto);
 
-      expect(result).toThrow('There should be no empty fields.');
+      expect(result).toThrow(
+        new HttpException(
+          'There should be no empty fields.',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     });
 
     it('Should throw error when password is empty', () => {
@@ -60,7 +70,12 @@ describe('UserService', () => {
 
       const result = () => userService.createUser(userDto);
 
-      expect(result).toThrow('There should be no empty fields.');
+      expect(result).toThrow(
+        new HttpException(
+          'There should be no empty fields.',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     });
 
     it('Should throw error when confirmationPassword is empty', () => {
@@ -74,7 +89,12 @@ describe('UserService', () => {
 
       const result = () => userService.createUser(userDto);
 
-      expect(result).toThrow('There should be no empty fields.');
+      expect(result).toThrow(
+        new HttpException(
+          'There should be no empty fields.',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
     });
 
     it('Should throw error when password and confirmationPassword are different', () => {
@@ -89,7 +109,10 @@ describe('UserService', () => {
       const result = () => userService.createUser(userDto);
 
       expect(result).toThrow(
-        'Password and confirmation password should be equal.',
+        new HttpException(
+          'Password and confirmation password should be equal.',
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     });
 
@@ -106,7 +129,9 @@ describe('UserService', () => {
 
         const result = () => userService.createUser(userDto);
 
-        expect(result).toThrow('Invalid user type.');
+        expect(result).toThrow(
+          new HttpException('Invalid user type.', HttpStatus.BAD_REQUEST),
+        );
       },
     );
 
@@ -174,13 +199,7 @@ describe('UserService', () => {
       const invalidUserId = 0;
 
       expect(() => userService.getUserById(invalidUserId)).toThrow(
-        new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'Invalid user id',
-          },
-          HttpStatus.BAD_REQUEST,
-        ),
+        new HttpException('Invalid user id', HttpStatus.BAD_REQUEST),
       );
     });
 
@@ -190,13 +209,7 @@ describe('UserService', () => {
       const userId = 1;
 
       expect(() => userService.getUserById(userId)).toThrow(
-        new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: 'User not found',
-          },
-          HttpStatus.NOT_FOUND,
-        ),
+        new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
     });
   });
@@ -208,13 +221,7 @@ describe('UserService', () => {
       const result = () => userService.deleteUser(userId);
 
       expect(result).toThrow(
-        new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'Invalid user id',
-          },
-          HttpStatus.BAD_REQUEST,
-        ),
+        new HttpException('Invalid user id', HttpStatus.BAD_REQUEST),
       );
     });
 
@@ -243,10 +250,7 @@ describe('UserService', () => {
 
       await expect(result).rejects.toThrow(
         new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'There should be no empty fields.',
-          },
+          'There should be no empty fields.',
           HttpStatus.BAD_REQUEST,
         ),
       );
@@ -261,10 +265,7 @@ describe('UserService', () => {
 
       await expect(result).rejects.toThrow(
         new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'There should be no empty fields.',
-          },
+          'There should be no empty fields.',
           HttpStatus.BAD_REQUEST,
         ),
       );
@@ -280,13 +281,7 @@ describe('UserService', () => {
         await userService.loginUser(username, password);
 
       await expect(result).rejects.toThrow(
-        new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: 'User not found',
-          },
-          HttpStatus.NOT_FOUND,
-        ),
+        new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
     });
 
@@ -317,13 +312,7 @@ describe('UserService', () => {
       const result = () => userService.updateUser(userId, userData);
 
       expect(result).toThrow(
-        new HttpException(
-          {
-            status: HttpStatus.BAD_REQUEST,
-            error: 'Invalid user data',
-          },
-          HttpStatus.BAD_REQUEST,
-        ),
+        new HttpException('Invalid user id', HttpStatus.BAD_REQUEST),
       );
     });
 
@@ -339,13 +328,7 @@ describe('UserService', () => {
       const result = () => userService.updateUser(userId, userData);
 
       expect(result).toThrow(
-        new HttpException(
-          {
-            status: HttpStatus.NOT_FOUND,
-            error: 'User not found',
-          },
-          HttpStatus.NOT_FOUND,
-        ),
+        new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
     });
 

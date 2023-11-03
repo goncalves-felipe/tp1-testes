@@ -19,13 +19,7 @@ export class ShoppingCartService {
     const { products } = createShoppingCartDto;
 
     if (!userId) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Invalid user Id',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Invalid user Id', HttpStatus.BAD_REQUEST);
     }
 
     const activeShoppingCartFromUser =
@@ -33,10 +27,7 @@ export class ShoppingCartService {
 
     if (activeShoppingCartFromUser) {
       throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'The user already have an active shopping cart.',
-        },
+        'The user already have an active shopping cart.',
         HttpStatus.FORBIDDEN,
       );
     }
