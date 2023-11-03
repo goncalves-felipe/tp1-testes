@@ -58,4 +58,51 @@ export class UserService {
 
     return user;
   }
+
+  deleteUser(userId: number): string {
+    if (!userId) {
+      throw 'Invalid user ID';
+    }
+
+    const deletedUserId = this.userRepository.deleteUser(userId);
+
+    if (!deletedUserId) {
+      throw 'User not found';
+    }
+
+    return `User with ID ${deletedUserId} has been deleted successfully.`;
+  }  
+
+  loginUser(loginData: UserDto): User | null {
+    const { username, password } = loginData;
+
+    if (username === 'felipe' && password === 'password') {
+      return {
+        id: 1,
+        name: 'Felipe Gonçalves',
+        username: 'felipe',
+        password: '',
+        type: 0,
+      };
+    } else {
+      throw 'Invalid username or password';
+    }
+  }
+
+  editUser(userId: number, updatedUserData: UserDto): User | null {
+    const user = this.userRepository.getUserById(userId);
+
+    if (!user) {
+      throw 'User not found';
+    }
+
+    user.name = updatedUserData.name || user.name;
+    user.username = updatedUserData.username || user.username;
+
+    this.userRepository.updateUser(userId, user);
+
+    return user;
+  }
+
+
 }

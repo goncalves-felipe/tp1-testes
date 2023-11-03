@@ -18,4 +18,14 @@ export class UserRepository {
       type: 0,
     };
   }
+
+  deleteUser(userId: number): number {
+    // TODO
+    return 1;
+  }
+
+  updateUser(userId: number, updatedUser: User): void {
+    // TODO
+  }
+  
 }
