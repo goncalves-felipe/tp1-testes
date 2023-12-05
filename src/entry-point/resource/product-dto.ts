@@ -1,12 +1,12 @@
-import { Product } from '../../domain/entity/product.entity';
+import { Product } from "../../domain/entity/product.entity";
 
 export class ProductDto {
   public id?: number;
   public name: string;
   public description: string;
   public price: number;
-  public quantity?: number; 
-  public stock?: number;    
+  public quantity?: number;
+  public stock?: number;
 }
 
 export const mapProductDtoFromEntity = (entity: Product) => {

@@ -21,8 +21,9 @@ export class ShoppingCartController {
 
   @Post(':shoppingCartId/products/:productId')
   addProductToCart(
-    @Param() params: { userId: string; shoppingCartId: string; productId: string },
-    @Body('amount') amount: number,
+    @Param()
+    params: { userId: string; shoppingCartId: string; productId: string },
+    @Body() { amount }: { amount: number },
   ): ShoppingCartDto {
     const newShoppingCart = this.shoppingCartService.addProductToCart(
       +params.userId,
@@ -35,7 +36,8 @@ export class ShoppingCartController {
 
   @Delete(':shoppingCartId/products/:productId')
   removeProductFromCart(
-    @Param() params: { userId: string; shoppingCartId: string; productId: string },
+    @Param()
+    params: { userId: string; shoppingCartId: string; productId: string },
     @Query('amount') amount: number,
   ): ShoppingCartDto {
     const newShoppingCart = this.shoppingCartService.removeProductFromCart(

@@ -11,7 +11,7 @@ import { UserDto } from '../resource/user-dto';
 import { UserService } from 'src/domain/service/user.service';
 import { SignInUserDto } from '../resource/sign-in-user-dto';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -23,11 +23,13 @@ export class UserController {
 
   @Delete(':id')
   deleteUser(@Param('id') userId: number) {
-    this.userService.deleteUser(userId);
+    this.userService.deleteUser(+userId);
   }
 
   @Post('login')
-  async loginUser(@Body() loginData: UserDto): Promise<SignInUserDto | null> {
+  async loginUser(
+    @Body() loginData: { username: string; password: string },
+  ): Promise<SignInUserDto | null> {
     return await this.userService.loginUser(
       loginData.username,
       loginData.password,
@@ -36,11 +38,11 @@ export class UserController {
 
   @Patch(':id')
   updateUser(@Param('id') userId: number, @Body() updatedUserData: UserDto) {
-    return this.userService.updateUser(userId, updatedUserData);
+    return this.userService.updateUser(+userId, updatedUserData);
   }
 
   @Get(':id')
   getUser(@Param('id') userId: number) {
-    return this.userService.getUserById(userId);
+    return this.userService.getUserById(+userId);
   }
 }

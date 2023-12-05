@@ -15,6 +15,8 @@ export class ProductRepository {
       name: 'Sample Product',
       description: 'A sample product description.',
       price: 19.99,
+      stock: 10,
+      quantity: 5,
     };
   }
 

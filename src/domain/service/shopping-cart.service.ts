@@ -4,13 +4,14 @@ import { ShoppingCartDto } from '../../entry-point/resource/shopping-cart-dto';
 import { UserService } from './user.service';
 import { CreateShoppingCartDto } from '../../entry-point/resource/create-shopping-cart-dto';
 import { ShoppingCart } from '../entity/shopping-cart.entity';
+import { ProductRepository } from '../repository/product.repository';
 
 @Injectable()
 export class ShoppingCartService {
-  productRepository: any;
   constructor(
     private readonly shoppingCartRepository: ShoppingCartRepository,
     private readonly userService: UserService,
+    private readonly productRepository: ProductRepository,
   ) {}
 
   createShoppingCart(
@@ -59,14 +60,14 @@ export class ShoppingCartService {
   ): ShoppingCartDto {
     const shoppingCart = this.shoppingCartRepository.getShoppingCartById(
       shoppingCartId,
-      userId
+      userId,
     );
 
     if (!shoppingCart) {
       throw new HttpException('Shopping cart not found', HttpStatus.NOT_FOUND);
     }
 
-    const product = this.productRepository.getProductById(productId);
+    const product = this.productRepository.getProduct(productId);
 
     if (!product) {
       throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
@@ -75,19 +76,19 @@ export class ShoppingCartService {
     if (amount <= 0) {
       throw new HttpException(
         'Amount should be greater than zero',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
-    if (amount > product.stock) {
+    if (amount > product.stock!) {
       throw new HttpException(
         'Not enough stock available',
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
     const existingProductIndex = shoppingCart.products.findIndex(
-      (item) => item.id as number === productId
+      (item) => (item.id as number) === productId,
     );
 
     if (existingProductIndex !== -1) {
@@ -95,7 +96,6 @@ export class ShoppingCartService {
       if (existingProduct) {
         existingProduct.quantity = (existingProduct.quantity || 0) + amount;
       }
-      //shoppingCart.products[existingProductIndex].quantity += amount;
     } else {
       const newProduct = { ...product, quantity: amount };
       shoppingCart.products.push(newProduct);
@@ -106,7 +106,7 @@ export class ShoppingCartService {
       products: shoppingCart.products,
       user: shoppingCart.user,
     };
-  
+
     return shoppingCartDto;
   }
 
@@ -116,55 +116,55 @@ export class ShoppingCartService {
     productId: number,
     amount: number,
   ): ShoppingCartDto {
-  const shoppingCart = this.shoppingCartRepository.getShoppingCartById(
-    shoppingCartId,
-    userId
-  );
-
-  if (!shoppingCart) {
-    throw new HttpException('Shopping cart not found', HttpStatus.NOT_FOUND);
-  }
-
-  const product = this.productRepository.getProductById(productId);
-
-  if (!product) {
-    throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-  }
-
-  if (amount <= 0) {
-    throw new HttpException(
-      'Amount should be greater than zero',
-      HttpStatus.BAD_REQUEST
+    const shoppingCart = this.shoppingCartRepository.getShoppingCartById(
+      shoppingCartId,
+      userId,
     );
-  }
 
-  const existingProductIndex = shoppingCart.products.findIndex(
-    (item) => item.id as number === productId
-  );
+    if (!shoppingCart) {
+      throw new HttpException('Shopping cart not found', HttpStatus.NOT_FOUND);
+    }
 
-  if (existingProductIndex === -1) {
-    throw new HttpException(
-      'Product not found in the shopping cart',
-      HttpStatus.NOT_FOUND
+    const product = this.productRepository.getProduct(productId);
+
+    if (!product) {
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (amount <= 0) {
+      throw new HttpException(
+        'Amount should be greater than zero',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const existingProductIndex = shoppingCart.products.findIndex(
+      (item) => (item.id as number) === productId,
     );
-  }
 
-  const existingProduct = shoppingCart.products[existingProductIndex];
+    if (existingProductIndex === -1) {
+      throw new HttpException(
+        'Product not found in the shopping cart',
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
-  if (amount > existingProduct.quantity!) {
-    throw new HttpException(
-      'Requested amount exceeds the quantity in the cart',
-      HttpStatus.BAD_REQUEST
-    );
-  }
+    const existingProduct = shoppingCart.products[existingProductIndex];
 
-  if (amount === existingProduct.quantity) {
-    shoppingCart.products.splice(existingProductIndex, 1);
-  } else {
-    existingProduct.quantity! -= amount;
-  }
+    if (amount > existingProduct.quantity!) {
+      throw new HttpException(
+        'Requested amount exceeds the quantity in the cart',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  this.shoppingCartRepository.updateShoppingCart(shoppingCart);
-  return shoppingCart;
+    if (amount === existingProduct.quantity) {
+      shoppingCart.products.splice(existingProductIndex, 1);
+    } else {
+      existingProduct.quantity! -= amount;
+    }
+
+    this.shoppingCartRepository.updateShoppingCart(shoppingCart);
+    return shoppingCart;
   }
 }

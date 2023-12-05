@@ -9,8 +9,6 @@ import { ShoppingCart } from '../../../domain/entity/shopping-cart.entity';
 import { User } from 'src/domain/entity/user.entity';
 import { UserDto } from 'src/entry-point/resource/user-dto';
 import { ProductRepository } from '../../../domain/repository/product.repository';
-import { Product } from '../../../domain/entity/product.entity';
-import { UserTypeEnum } from '../../../shared/enum/user-type-enum';
 
 describe('ShoppingCartService', () => {
   let shoppingCartService: ShoppingCartService;
@@ -29,6 +27,7 @@ describe('ShoppingCartService', () => {
     shoppingCartService = new ShoppingCartService(
       shoppingCartRepository,
       userService,
+      productRepository,
     );
   });
 
@@ -147,14 +146,20 @@ describe('ShoppingCartService', () => {
         products: [],
         active: true,
       };
-    
-      jest.spyOn(shoppingCartRepository, 'getShoppingCartById').mockReturnValue(shoppingCart);
-    
-      jest.spyOn(productRepository, 'getProduct').mockReturnValue({ id: 1, name: 'Product 1', description: 'Description', price: 10, stock: 5 });
-    
+
+      jest
+        .spyOn(shoppingCartRepository, 'getShoppingCartById')
+        .mockReturnValue(shoppingCart);
+
+      jest.spyOn(productRepository, 'getProduct').mockReturnValue({
+        id: 1,
+        name: 'Product 1',
+        description: 'Description',
+        price: 10,
+        stock: 5,
+      });
+
       expect(() => shoppingCartService.addProductToCart(1, 1, 1, 10)).toThrow();
     });
-
   });
-  
 });

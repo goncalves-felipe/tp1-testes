@@ -86,7 +86,9 @@ export class UserService {
     const payload = { sub: user.id, username: user.username };
 
     return {
-      accessToken: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload, {
+        privateKey: 'private-key',
+      }),
       user: mapUserDtoFromEntity(user),
     };
   }
