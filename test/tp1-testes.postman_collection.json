@@ -1,0 +1,1243 @@
+{
+	"info": {
+		"_postman_id": "759d0f92-c6ad-475f-8a84-8e6200f492f2",
+		"name": "tp1-testes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11388702",
+		"_collection_link": "https://winter-shuttle-170294.postman.co/workspace/tp1-testes~1efe5164-e329-48d8-9aab-746f82520c5d/collection/11388702-759d0f92-c6ad-475f-8a84-8e6200f492f2?action=share&source=collection_link&creator=11388702"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "get-user",
+					"item": [
+						{
+							"name": "get user - invalid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Response status code is 400', function () {",
+											"    pm.response.to.have.status(400);",
+											"})",
+											"",
+											"pm.test('Response has the required fields - statusCode and message', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.statusCode).to.exist;",
+											"    pm.expect(responseData.message).to.exist;",
+											"})",
+											"",
+											"pm.test('StatusCode is a non-zero integer', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.statusCode).to.exist.and.to.be.a('number');",
+											"    pm.expect(responseData.statusCode).to.be.above(0);",
+											"})",
+											"",
+											"pm.test('Message is a non-empty string', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, 'Message should not be empty');",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base-url}}users/0",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"0"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get user - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has the required fields\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData).to.be.an('object');",
+											"  pm.expect(responseData.id).to.exist;",
+											"  pm.expect(responseData.name).to.exist;",
+											"  pm.expect(responseData.type).to.exist;",
+											"  pm.expect(responseData.username).to.exist;",
+											"});",
+											"",
+											"",
+											"pm.test(\"ID is a non-negative integer\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.id).to.exist.and.to.be.a('number');",
+											"    pm.expect(responseData.id).to.be.at.least(0, \"ID should be a non-negative integer\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Name is a non-empty string\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData).to.be.an('object');",
+											"  pm.expect(responseData.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Type is a valid integer value\", function () {",
+											"  const responseData = pm.response.json();",
+											"",
+											"  pm.expect(responseData.type).to.exist.and.to.be.a('number');",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base-url}}users/1",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "login-user",
+					"item": [
+						{
+							"name": "login user - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 201\", function () {",
+											"  pm.response.to.have.status(201);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Verify that the accessToken is a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.accessToken).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"User ID is a non-negative integer\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.user.id).to.be.a('number');",
+											"    pm.expect(responseData.user.id).to.be.at.least(0, \"User ID should be a non-negative integer\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Verify that user.name is a non-empty string\", function () {",
+											"  const responseData = pm.response.json();",
+											"",
+											"  pm.expect(responseData.user).to.be.an('object');",
+											"  pm.expect(responseData.user.name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"username\",\r\n    \"password\": \"password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/login",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login user - invalid username",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Response status code is 400', function () {",
+											"    pm.response.to.have.status(400);",
+											"})",
+											"",
+											"pm.test('Response has the required fields - statusCode and message', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.statusCode).to.exist;",
+											"    pm.expect(responseData.message).to.exist;",
+											"})",
+											"",
+											"pm.test('StatusCode is a non-zero integer', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.statusCode).to.exist.and.to.be.a('number');",
+											"    pm.expect(responseData.statusCode).to.be.above(0);",
+											"})",
+											"",
+											"pm.test('Message is a non-empty string', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, 'Message should not be empty');",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"\",\r\n    \"password\": \"password\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/login",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login user - invalid password",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 400\", function () {",
+											"  pm.expect(pm.response.code).to.equal(400);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has the required fields - statusCode and message\", function () {",
+											"    const responseData = pm.response.json();",
+											"",
+											"    pm.expect(responseData.statusCode).to.exist;",
+											"    pm.expect(responseData.message).to.exist;",
+											"});",
+											"",
+											"",
+											"pm.test(\"StatusCode is a non-zero integer\", function () {",
+											"  const responseData = pm.response.json();",
+											"",
+											"  pm.expect(responseData.statusCode).to.exist.and.to.be.a('number');",
+											"  pm.expect(responseData.statusCode).to.not.equal(0);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Message is a non-empty string\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData.message).to.exist.and.to.be.a('string').and.to.not.be.empty;",
+											"});",
+											"",
+											"",
+											"pm.test(\"Content-Type header is application/json\", function () {",
+											"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"username\",\r\n    \"password\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/login",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "create-user",
+					"item": [
+						{
+							"name": "create user - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 201\", function () {",
+											"    pm.expect(pm.response.code).to.equal(201);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has required fields - id, name, type, and username\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData).to.be.an('object');",
+											"  pm.expect(responseData.id).to.exist.and.to.be.a('number');",
+											"  pm.expect(responseData.name).to.exist.and.to.be.a('string');",
+											"  pm.expect(responseData.type).to.exist.and.to.be.a('number');",
+											"  pm.expect(responseData.username).to.exist.and.to.be.a('string');",
+											"});",
+											"",
+											"",
+											"pm.test(\"Name is a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.name).to.exist.and.to.be.a(\"string\").and.to.have.lengthOf.at.least(1, \"Name should not be empty\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Type is a non-negative integer\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData).to.be.an(\"object\");",
+											"  pm.expect(responseData.type).to.be.a(\"number\");",
+											"  pm.expect(responseData.type).to.be.at.least(0);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Username is a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.username).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Username should not be empty\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"name\",\r\n    \"username\": \"username\",\r\n    \"password\": \"password\",\r\n    \"confirmationPassword\": \"password\",\r\n    \"type\": 0 \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users",
+									"host": [
+										"{{base-url}}users"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "update-user",
+					"item": [
+						{
+							"name": "update user - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"    pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Content-Type is application/json\", function () {",
+											"  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Validate the id field is a non-negative integer\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.id).to.be.a('number');",
+											"    pm.expect(responseData.id).to.be.at.least(0, \"Value should be a non-negative integer\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Validate the name field is a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.name).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Name field should not be empty\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Validate the type field is a non-negative integer\", function () {",
+											"  const responseData = pm.response.json();",
+											"",
+											"  pm.expect(responseData).to.be.an('object');",
+											"  pm.expect(responseData.type).to.exist.and.to.be.a('number');",
+											"  pm.expect(responseData.type).to.be.at.least(0, \"Value should be a non-negative integer\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"name\",\r\n    \"username\": \"username\",\r\n    \"type\": 0 \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/1",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "delete-user",
+					"item": [
+						{
+							"name": "delete user - valid",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/1",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "product",
+			"item": [
+				{
+					"name": "create-product",
+					"item": [
+						{
+							"name": "create product - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Response status code is 201', function () {",
+											"    pm.response.to.have.status(201);",
+											"})",
+											"",
+											"pm.test('Response has the required fields', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.id).to.exist.and.to.be.a('number');",
+											"    pm.expect(responseData.name).to.exist.and.to.be.a('string');",
+											"    pm.expect(responseData.description).to.exist.and.to.be.a('string');",
+											"    pm.expect(responseData.price).to.exist.and.to.be.a('number');",
+											"})",
+											"",
+											"pm.test('Name is a non-empty string', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.name).to.be.a('string').and.to.have.lengthOf.at.least(1, 'Value should not be empty');",
+											"})",
+											"",
+											"pm.test('Price is a non-negative number', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.price).to.be.a('number');",
+											"    pm.expect(responseData.price).to.be.at.least(0);",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"name\",\r\n    \"description\": \"description\",\r\n    \"price\": 10,\r\n    \"stock\": 20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}products",
+									"host": [
+										"{{base-url}}products"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "get-products",
+					"item": [
+						{
+							"name": "get products - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has the required fields\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"    pm.expect(responseData).to.have.lengthOf.at.least(1, \"Array should not be empty\");",
+											"    ",
+											"    responseData.forEach(function(product) {",
+											"        pm.expect(product).to.have.property('id');",
+											"        pm.expect(product).to.have.property('name');",
+											"        pm.expect(product).to.have.property('description');",
+											"        pm.expect(product).to.have.property('price');",
+											"    });",
+											"});",
+											"",
+											"",
+											"  pm.test(\"Id is a non-negative integer\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"    ",
+											"    responseData.forEach(function(product) {",
+											"      pm.expect(product.id).to.be.a('number');",
+											"      pm.expect(product.id).to.be.at.least(0);",
+											"    });",
+											"  });",
+											"",
+											"",
+											"pm.test(\"Name is a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('array');",
+											"    ",
+											"    responseData.forEach(function(product) {",
+											"        pm.expect(product.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Name should not be empty\");",
+											"    });",
+											"});",
+											"",
+											"",
+											"pm.test(\"Description is a non-empty string\", function () {",
+											"  const responseData = pm.response.json();",
+											"",
+											"  pm.expect(responseData).to.be.an('array');",
+											"  responseData.forEach(function(product) {",
+											"    pm.expect(product.description).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Description should not be empty\");",
+											"  });",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}products",
+									"host": [
+										"{{base-url}}products"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "get-product",
+					"item": [
+						{
+							"name": "get product - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has the required fields\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData).to.be.an('object');",
+											"  pm.expect(responseData.id).to.exist;",
+											"  pm.expect(responseData.name).to.exist;",
+											"  pm.expect(responseData.description).to.exist;",
+											"  pm.expect(responseData.price).to.exist;",
+											"  pm.expect(responseData.stock).to.exist;",
+											"  pm.expect(responseData.quantity).to.exist;",
+											"});",
+											"",
+											"",
+											"pm.test(\"Name is a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Name should not be empty\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Price is a non-negative number\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.price).to.be.a('number');",
+											"    pm.expect(responseData.price).to.be.at.least(0, \"Price should be a non-negative number\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Stock and quantity are non-negative integers\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData).to.be.an('object');",
+											"  pm.expect(responseData.stock).to.exist.and.to.be.a('number').and.to.satisfy((value) => value >= 0, \"Stock should be a non-negative integer\");",
+											"  pm.expect(responseData.quantity).to.exist.and.to.be.a('number').and.to.satisfy((value) => value >= 0, \"Quantity should be a non-negative integer\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}products/1",
+									"host": [
+										"{{base-url}}products"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "edit-product",
+					"item": [
+						{
+							"name": "edit product - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.expect(pm.response.code).to.equal(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Response has required fields\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData).to.be.an('object');",
+											"  pm.expect(responseData.name).to.exist.and.to.be.a('string');",
+											"  pm.expect(responseData.description).to.exist.and.to.be.a('string');",
+											"  pm.expect(responseData.price).to.exist.and.to.be.a('number');",
+											"  pm.expect(responseData.stock).to.exist.and.to.be.a('number');",
+											"});",
+											"",
+											"",
+											"pm.test(\"Name is a non-empty string\", function () {",
+											"    const responseData = pm.response.json();",
+											"",
+											"    pm.expect(responseData.name).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Name should not be empty\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Price is a positive number\", function () {",
+											"    const responseData = pm.response.json();",
+											"",
+											"    pm.expect(responseData.price).to.be.above(0);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Stock is a non-negative integer\", function () {",
+											"  const responseData = pm.response.json();",
+											"",
+											"  pm.expect(responseData.stock).to.be.a('number');",
+											"  pm.expect(responseData.stock).to.be.at.least(0, \"Stock should be a non-negative integer\");",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"name\",\r\n    \"description\": \"description\",\r\n    \"price\": 10,\r\n    \"stock\": 20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}products/1",
+									"host": [
+										"{{base-url}}products"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "delete-product",
+					"item": [
+						{
+							"name": "delete product - valid",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}products/1",
+									"host": [
+										"{{base-url}}products"
+									],
+									"path": [
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "shopping-cart",
+			"item": [
+				{
+					"name": "create-shopping-cart",
+					"item": [
+						{
+							"name": "create shopping cart - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Response status code is 403', function () {",
+											"    pm.response.to.have.status(403);",
+											"})",
+											"",
+											"pm.test('Response has the required fields - statusCode and message', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.statusCode).to.exist.and.to.be.a('number');",
+											"    pm.expect(responseData.message).to.exist.and.to.be.a('string');",
+											"})",
+											"",
+											"pm.test('StatusCode is a non-zero integer', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.statusCode).to.exist.and.to.be.a('number');",
+											"    pm.expect(responseData.statusCode).to.not.equal(0);",
+											"})",
+											"",
+											"pm.test('Message is a non-empty string', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.message).to.be.a('string').and.to.have.length.above(0, 'Message should not be empty');",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"products\": [\r\n        {\r\n            \"name\": \"name\",\r\n            \"description\": \"description\",\r\n            \"quantity\": 10\r\n        }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/1/shopping-carts",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"1",
+										"shopping-carts"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "add-product-to-cart",
+					"item": [
+						{
+							"name": "add product to cart - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Validate the 'id' field is a non-negative integer\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.id).to.be.a('number');",
+											"    pm.expect(responseData.id).to.be.at.least(0, \"ID should be a non-negative integer\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Verify that the 'products' array is present and contains at least one element\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.products).to.exist.and.to.be.an('array').and.to.have.lengthOf.at.least(1, \"Array should contain at least one element\");",
+											"});",
+											"",
+											"",
+											"pm.test(\"Verify that the 'user' object is present in the response and contains the expected fields\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData).to.be.an('object');",
+											"  pm.expect(responseData.user).to.exist;",
+											"  pm.expect(responseData.user.id).to.exist;",
+											"  pm.expect(responseData.user.username).to.exist;",
+											"  pm.expect(responseData.user.name).to.exist;",
+											"  pm.expect(responseData.user.type).to.exist;",
+											"  pm.expect(responseData.user.password).to.exist;",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\": 5\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/1/shopping-carts/1/products/1",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"1",
+										"shopping-carts",
+										"1",
+										"products",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add product to cart - invalid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Response status code is 400', function () {",
+											"    pm.response.to.have.status(400);",
+											"})",
+											"",
+											"pm.test('Response has the required fields - statusCode and message', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.statusCode).to.exist;",
+											"    pm.expect(responseData.message).to.exist;",
+											"})",
+											"",
+											"pm.test('StatusCode is a non-zero integer', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.statusCode).to.exist.and.to.be.a('number');",
+											"    pm.expect(responseData.statusCode).to.be.above(0);",
+											"})",
+											"",
+											"pm.test('Message is a non-empty string', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, 'Message should not be empty');",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"amount\": 15\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/1/shopping-carts/1/products/1",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"1",
+										"shopping-carts",
+										"1",
+										"products",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "remove-product-from-cart",
+					"item": [
+						{
+							"name": "remove product from cart - valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response status code is 200\", function () {",
+											"  pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Verify that the 'active' field is true\", function () {",
+											"  const responseData = pm.response.json();",
+											"  ",
+											"  pm.expect(responseData.active).to.be.true;",
+											"});",
+											"",
+											"",
+											"pm.test(\"Validate the 'id' field is a non-negative integer\", function () {",
+											"    const responseData = pm.response.json();",
+											"",
+											"    pm.expect(responseData.id).to.be.a('number');",
+											"    pm.expect(responseData.id).to.be.at.least(0);",
+											"});",
+											"",
+											"",
+											"pm.test(\"Verify that the 'products' array is present in the response\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.products).to.exist.and.to.be.an('array');",
+											"});",
+											"",
+											"pm.test(\"Verify the number of elements in the 'products' array\", function () {",
+											"    const responseData = pm.response.json();",
+											"    ",
+											"    pm.expect(responseData.products).to.have.lengthOf(1);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/1/shopping-carts/1/products/1?amount=5",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"1",
+										"shopping-carts",
+										"1",
+										"products",
+										"1"
+									],
+									"query": [
+										{
+											"key": "amount",
+											"value": "5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "remove product from cart - invalid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test('Response status code is 400', function () {",
+											"    pm.response.to.have.status(400);",
+											"})",
+											"",
+											"pm.test('Response has the required fields - statusCode and message', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData).to.be.an('object');",
+											"    pm.expect(responseData.statusCode).to.exist;",
+											"    pm.expect(responseData.message).to.exist;",
+											"})",
+											"",
+											"pm.test('StatusCode is a non-zero integer', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.statusCode).to.exist.and.to.be.a('number');",
+											"    pm.expect(responseData.statusCode).to.be.above(0);",
+											"})",
+											"",
+											"pm.test('Message is a non-empty string', function () {",
+											"    const responseData = pm.response.json();",
+											"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, 'Message should not be empty');",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base-url}}users/1/shopping-carts/1/products/1?amount=10",
+									"host": [
+										"{{base-url}}users"
+									],
+									"path": [
+										"1",
+										"shopping-carts",
+										"1",
+										"products",
+										"1"
+									],
+									"query": [
+										{
+											"key": "amount",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "postman-api-key",
+			"value": "PMAK-656e26d41eddc400316390c8-d9ef8f8ec5ce7535cfa662b10e04bf1bde",
+			"type": "string"
+		},
+		{
+			"key": "base-url",
+			"value": "http://localhost:3000/",
+			"type": "string"
+		}
+	]
+}
